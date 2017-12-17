@@ -1,0 +1,24 @@
+﻿
+@{ 
+    var items = new int[] { 1, 2, 3, 4, 5 };
+}
+
+@foreach (var item in items)
+{
+    @item
+}
+
+
+@foreach (var item in items)
+{
+   @(item + " ")
+}
+
+
+<ul>
+    @foreach (var item in items)
+{
+<li>@item</li>;
+}
+
+</ul>
