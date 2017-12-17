@@ -411,10 +411,6 @@
     <Content Include="Views\Shared\_LayoutMetro.cshtml" />
     <Content Include="Views\Home\MetroIndex.cshtml" />
     <Content Include="Views\Home\_ViewStart.cshtml" />
-    <Content Include="Views\OrderLines\Create.cshtml" />
-    <Content Include="Views\OrderLines\Delete.cshtml" />
-    <Content Include="Views\OrderLines\Details.cshtml" />
-    <Content Include="Views\OrderLines\Edit.cshtml" />
     <Content Include="Views\OrderLines\Index.cshtml" />
     <Content Include="Views\Products\OrderLines.cshtml" />
   </ItemGroup>
