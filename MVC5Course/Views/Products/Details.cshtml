@@ -4,6 +4,11 @@
     ViewBag.Title = "Details";
 }
 
+@using (Html.BeginForm())
+{
+
+}
+
 <h2>Details</h2>
 
 <div>
@@ -48,12 +53,12 @@
 <h4>OrderLines for @Model.ProductName</h4>
 
 @* 直接從 Model 加入PartialView*@
-    @*@Html.Partial("OrderLines", Model.OrderLine.ToList())*@
+@*@Html.Partial("OrderLines", Model.OrderLine.ToList())*@
 @* 利用ViewBag 加入PartialView *@
-    @*@Html.Partial("OrderLines", (object)ViewBag.OrderLines)*@  
+@*@Html.Partial("OrderLines", (object)ViewBag.OrderLines)*@
 
 @* 加入新的conreoller 來顯示PartialView *@
-@Html.Action("Index","OrderLines",new { id = Model.ProductId})
+@Html.Action("Index", "OrderLines", new { id = Model.ProductId })
 
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ProductId }) |

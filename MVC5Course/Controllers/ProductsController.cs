@@ -37,12 +37,28 @@ namespace MVC5Course.Controllers
 
             //ViewBag.OrderLines = product.OrderLine.ToList();
 
-            return View(product);
+            return View();
         }
 
         // GET: Products/Create
         public ActionResult Create()
         {
+            var items = new List<SelectListItem>();
+            items.Add(new SelectListItem() { Value = "0", Text = "0" });
+            items.Add(new SelectListItem() { Value = "10", Text = "10" });
+            items.Add(new SelectListItem() { Value = "20", Text = "20" });
+            items.Add(new SelectListItem() { Value = "30", Text = "30" });
+            ViewBag.Price = new SelectList(items, "Value", "Text");
+
+            var price_list = (from p in db.Product
+                              select new
+                              {
+                                  Value = p.Price,
+                                  Text = p.Price
+                              }).Distinct().OrderBy(p => p.Value);
+
+            ViewBag.Price = new SelectList(price_list, "Value", "Text");
+
             return View();
         }
 
@@ -75,6 +91,16 @@ namespace MVC5Course.Controllers
             {
                 return HttpNotFound();
             }
+
+            var price_list = (from p in db.Product
+                              select new
+                              {
+                                  Value = p.Price,
+                                  Text = p.Price
+                              }).Distinct().OrderBy(p => p.Value);
+
+            ViewBag.Price = new SelectList(price_list, "Value", "Text", product.Price);
+
             return View(product);
         }
 
@@ -89,7 +115,7 @@ namespace MVC5Course.Controllers
         {
             var product = db.Product.Find(id);
             //if (ModelState.IsValid)
-            if (TryUpdateModel(product, new string[] { "ProductId","Price" ,"Active" ,"Stock" }))
+            if (TryUpdateModel(product, new string[] { "ProductId", "Price", "Active", "Stock" }))
             {
                 //db.Entry(product).State = EntityState.Modified;
                 db.SaveChanges();
