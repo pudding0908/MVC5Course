@@ -44,6 +44,17 @@
 
     </dl>
 </div>
+
+<h4>OrderLines for @Model.ProductName</h4>
+
+@* 直接從 Model 加入PartialView*@
+    @Html.Partial("OrderLines", Model.OrderLine.ToList())
+@* 利用ViewBag 加入PartialView *@
+    @*@Html.Partial("OrderLines", (object)ViewBag.OrderLines)*@  
+
+@* 加入新的conreoller 來顯示PartialView *@
+@*@Html.Action("Index","OderLines",new { id = Model.ProductId})*@
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ProductId }) |
     @Html.ActionLink("Back to List", "Index")

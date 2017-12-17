@@ -7,134 +7,121 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MVC5Course.Models;
-using MVC5Course.ViewModels;
 
 namespace MVC5Course.Controllers
 {
-    public class ProductsController : Controller
+    public class OrderLinesController : Controller
     {
         private FabricsEntities db = new FabricsEntities();
 
-        // GET: Products
+        // GET: OrderLines
         public ActionResult Index()
         {
-            //return View(db.Product.ToList());
-            return View(db.Product.Take(10));
+            var orderLine = db.OrderLine.Include(o => o.Order).Include(o => o.Product);
+            return View(orderLine.ToList());
         }
 
-        // GET: Products/Details/5
+        // GET: OrderLines/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Product.Find(id);
-            if (product == null)
+            OrderLine orderLine = db.OrderLine.Find(id);
+            if (orderLine == null)
             {
                 return HttpNotFound();
             }
-
-            //ViewBag.OrderLines = product.OrderLine.ToList();
-
-            return View(product);
+            return View(orderLine);
         }
 
-        // GET: Products/Create
+        // GET: OrderLines/Create
         public ActionResult Create()
         {
+            ViewBag.OrderId = new SelectList(db.Order, "OrderId", "OrderStatus");
+            ViewBag.ProductId = new SelectList(db.Product, "ProductId", "ProductName");
             return View();
         }
 
-        // POST: Products/Create
+        // POST: OrderLines/Create
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
+        public ActionResult Create([Bind(Include = "OrderId,LineNumber,ProductId,Qty,LineTotal")] OrderLine orderLine)
         {
             if (ModelState.IsValid)
             {
-                db.Product.Add(product);
+                db.OrderLine.Add(orderLine);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(product);
+            ViewBag.OrderId = new SelectList(db.Order, "OrderId", "OrderStatus", orderLine.OrderId);
+            ViewBag.ProductId = new SelectList(db.Product, "ProductId", "ProductName", orderLine.ProductId);
+            return View(orderLine);
         }
 
-        // GET: Products/Edit/5
+        // GET: OrderLines/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Product.Find(id);
-            if (product == null)
+            OrderLine orderLine = db.OrderLine.Find(id);
+            if (orderLine == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+            ViewBag.OrderId = new SelectList(db.Order, "OrderId", "OrderStatus", orderLine.OrderId);
+            ViewBag.ProductId = new SelectList(db.Product, "ProductId", "ProductName", orderLine.ProductId);
+            return View(orderLine);
         }
 
-        // POST: Products/Edit/5
+        // POST: OrderLines/Edit/5
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id)
-        //public ActionResult Edit([Bind(Include = "ProductId,ProductName,Price,Active,Stock")] Product product)
-        //從一開始的modelbinding驗證，把它拉到裡面用TryUpdateModel做
+        public ActionResult Edit([Bind(Include = "OrderId,LineNumber,ProductId,Qty,LineTotal")] OrderLine orderLine)
         {
-            var product = db.Product.Find(id);
-            //if (ModelState.IsValid)
-            if (TryUpdateModel(product, new string[] { "ProductId","Price" ,"Active" ,"Stock" }))
+            if (ModelState.IsValid)
             {
-                //db.Entry(product).State = EntityState.Modified;
+                db.Entry(orderLine).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(product);
+            ViewBag.OrderId = new SelectList(db.Order, "OrderId", "OrderStatus", orderLine.OrderId);
+            ViewBag.ProductId = new SelectList(db.Product, "ProductId", "ProductName", orderLine.ProductId);
+            return View(orderLine);
         }
 
-        // GET: Products/Delete/5
+        // GET: OrderLines/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Product product = db.Product.Find(id);
-            if (product == null)
+            OrderLine orderLine = db.OrderLine.Find(id);
+            if (orderLine == null)
             {
                 return HttpNotFound();
             }
-            return View(product);
+            return View(orderLine);
         }
 
-        // POST: Products/Delete/5
+        // POST: OrderLines/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Product product = db.Product.Find(id);
-            db.Product.Remove(product);
+            OrderLine orderLine = db.OrderLine.Find(id);
+            db.OrderLine.Remove(orderLine);
             db.SaveChanges();
             return RedirectToAction("Index");
-        }
-
-        public ActionResult List()
-        {
-            var data = from p in db.Product
-                       select new ProductListVM()
-                       {
-                           ProductId = p.ProductId,
-                           ProductName = p.ProductName,
-                           Price = p.Price,
-                           Stock = p.Stock
-                       };
-            return View(data);
         }
 
         protected override void Dispose(bool disposing)
